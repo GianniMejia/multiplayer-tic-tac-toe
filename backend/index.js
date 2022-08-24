@@ -1,13 +1,17 @@
 import express from "express";
 import "dotenv/config";
-import db from "./db/db.js";
+// import db from "./db/db.js";
 import bcrypt from "bcrypt";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3002; //Heroku || localhost port number
 
 app.use(express.json());
-app.get("/", async (req, res) => {});
+app.use(cors({ origin: "*" }));
+app.get("/", async (req, res) => {
+  res.send("hello world");
+});
 
 app.post("/api/signup", async (req, res) => {
   try {
@@ -42,7 +46,7 @@ app.post("/api/signup", async (req, res) => {
     // req.session.userId = user.id;
     // req.session.save();
 
-    res.redirect("/");
+    res.status(200).send({ message: "Signup successful!" });
   } catch (error) {
     res.status(500).send({ message: "Something went wrong." });
     console.log(error);
@@ -109,4 +113,4 @@ app.get("/api/current-user", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log("server running." + PORT));
+app.listen(PORT, () => console.log("Server running on port " + PORT));
