@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 import { CustomError } from "../utils";
 import { useNavigate } from "react-router-dom";
 
-function Signup() {
+function Signup({ token, setToken }) {
   const [error, setError] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    if (token) {
       navigate("/");
     }
-  }, [navigate]);
+  }, [token, navigate]);
 
   return (
     <div>
@@ -43,7 +43,7 @@ function Signup() {
             }
 
             // Login
-            localStorage.setItem("token", data.token);
+            setToken(data.token);
             navigate("/");
           } catch (error) {
             if (error.code) {
