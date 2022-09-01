@@ -6,6 +6,7 @@ import cors from "cors";
 import authRouter from "./routes/auth.js";
 import { expressjwt } from "express-jwt";
 import "dotenv";
+import db from "./db.js";
 
 const app = express();
 const PORT = process.env.PORT || 3002; //Heroku || localhost port number
@@ -13,7 +14,10 @@ const PORT = process.env.PORT || 3002; //Heroku || localhost port number
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
-app.use(expressjwt({ secret: process.env.JWT_SECRET, algorithms: ["HS256"] }));
+const jwtMiddleware = expressjwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ["HS256"],
+});
 
 // API Routes:
 app.use("/api/auth", authRouter);

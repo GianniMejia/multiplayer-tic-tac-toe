@@ -1,22 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomError } from "../utils";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const [error, setError] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   return (
     <div>
       <form
-        class="small-form"
+        className="small-form"
         onSubmit={async (e) => {
           // Stop the page from reloading.
           e.preventDefault();
 
           try {
             const response = await fetch(
-              process.env.REACT_APP_API_URL + "/api/signup",
+              process.env.REACT_APP_API_URL + "/api/auth/signup",
               {
                 method: "POST",
                 headers: {
@@ -29,15 +37,14 @@ function Signup() {
               }
             );
 
-            if (response.redirected) {
-              window.location.href = response.url;
-              return;
-            }
-
             const data = await response.json();
             if (!response.ok) {
               throw new CustomError(data.message, response.status);
             }
+
+            // Login
+            localStorage.setItem("token", data.token);
+            navigate("/");
           } catch (error) {
             if (error.code) {
               setError(error.message);
@@ -48,7 +55,7 @@ function Signup() {
         }}
       >
         <h1>Signup</h1>
-        <div class="errors">{error}</div>
+        <div className="errors">{error}</div>
         <label>
           Username
           <input
