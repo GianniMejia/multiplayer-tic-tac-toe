@@ -41,47 +41,43 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// router.post("/login", async (req, res) => {
-//   try {
-//     if (req.session.userId) {
-//       res.redirect("/");
-//       return;
-//     }
+router.post("/login", async (req, res) => {
+  try {
+    if (!req.body.username) {
+      res.status(400).send({ message: "Please enter a username." });
+      return;
+    }
 
-//     if (!req.body.username) {
-//       res.status(400).send({ message: "Please enter a username." });
-//       return;
-//     }
+    if (!req.body.password) {
+      res.status(400).send({ message: "Please enter a password." });
+      return;
+    }
 
-//     if (!req.body.password) {
-//       res.status(400).send({ message: "Please enter a password." });
-//       return;
-//     }
+    const user = await User.findOne({
+      username: req.body.username,
+    });
 
-//     const user = await User.findOne({
-//       where: { username: req.body.username },
-//     });
+    if (!user) {
+      res.status(400).send({ message: "Invalid username/password." });
+      return;
+    }
 
-//     if (!user) {
-//       res.status(400).send({ message: "Invalid username/password." });
-//       return;
-//     }
+    if (!bcrypt.compare(req.body.password, user.passwordHash)) {
+      res.status(400).send({ message: "Invalid username/password." });
+      return;
+    }
 
-//     if (!bcrypt.compare(req.body.password, user.passwordHash)) {
-//       res.status(400).send({ message: "Invalid username/password." });
-//       return;
-//     }
+    // Create the JWT for the browser to save
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+      algorithm: "HS256",
+    });
 
-//     // Save user data in session (log them in)
-//     req.session.userId = user.id;
-//     req.session.save();
-
-//     res.redirect("/");
-//   } catch (error) {
-//     res.status(500).send({ message: "Something went wrong." });
-//     console.log(error);
-//   }
-// });
+    res.send({ token: token });
+  } catch (error) {
+    res.status(500).send({ message: "Something went wrong." });
+    console.log(error);
+  }
+});
 
 // router.get("/logout", (req, res) => {
 //   req.session.destroy();
