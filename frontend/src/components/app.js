@@ -9,6 +9,8 @@ function App() {
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
     }
   }, [token]);
 
@@ -18,11 +20,19 @@ function App() {
         <header>
           <nav>
             <Link to="/">Home</Link>
-            {!token && (
+            {!token ? (
               <>
                 <Link to="/signup">Signup</Link>
                 <Link to="/login">Login</Link>
               </>
+            ) : (
+              <button
+                onClick={() => {
+                  setToken(null);
+                }}
+              >
+                Logout
+              </button>
             )}
           </nav>
         </header>
