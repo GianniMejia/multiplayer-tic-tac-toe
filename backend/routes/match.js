@@ -48,4 +48,25 @@ router.post("/", jwtMiddleware, async (req, res) => {
   }
 });
 
+router.get("/:id", jwtMiddleware, async (req, res) => {
+  try {
+    if (!req.params.id) {
+      res.status(404).send({ message: "Match not found." });
+      return;
+    }
+
+    const match = await Match.findById(req.params.id);
+
+    if (req.auth.userId != match.user1 && req.auth.userId != match.user2) {
+      res.status(401).send({ message: "Unauthorized." });
+      return;
+    }
+
+    res.send({ match: match });
+  } catch (error) {
+    res.status(500).send({ message: "Something went wrong." });
+    console.log(error);
+  }
+});
+
 export default router;

@@ -3,9 +3,9 @@ import { CustomError } from "../utils";
 import { useNavigate } from "react-router-dom";
 
 function Home({ token, setToken }) {
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [opponentUsername, setOpponetUsername] = useState("");
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
     token && (
@@ -33,7 +33,7 @@ function Home({ token, setToken }) {
               throw new CustomError(data.message, response.status);
             }
 
-            // navigate("/");
+            navigate(`/match/${data.match.id}`);
           } catch (error) {
             if (error.code) {
               setError(error.message);

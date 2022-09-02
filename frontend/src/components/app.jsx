@@ -3,6 +3,7 @@ import Signup from "./signup";
 import Login from "./login";
 import { useEffect, useState } from "react";
 import Home from "./home";
+import Match from "./match";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -51,6 +52,10 @@ function App() {
             <Route
               path="/login"
               element={<Login token={token} setToken={setToken} />}
+            />
+            <Route
+              path="/match/:id"
+              element={<Match token={token} setToken={setToken} />}
             />
           </Routes>
         </main>

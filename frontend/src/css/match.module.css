@@ -1,0 +1,22 @@
+.gameBoard {
+  display: inline-flex;
+  gap: 2px;
+  background: black;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: space-between;
+
+  width: 400px;
+  height: 400px;
+}
+
+.gameBoard button {
+  width: calc(100% / 3 - 2px);
+  height: calc(100% / 3 - 2px);
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: white;
+  border-radius: 0;
+  font-size: calc(400px / 3 - 20px);
+}
