@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Signup from "./signup";
 import Login from "./login";
 import { useEffect, useState } from "react";
+import Home from "./home";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -38,7 +39,11 @@ function App() {
         </header>
         <main>
           <Routes>
-            <Route exact path="/" element={<div></div>} />
+            <Route
+              exact
+              path="/"
+              element={<Home token={token} setToken={setToken} />}
+            />
             <Route
               path="/signup"
               element={<Signup token={token} setToken={setToken} />}

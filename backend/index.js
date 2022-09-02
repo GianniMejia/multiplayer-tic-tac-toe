@@ -4,6 +4,7 @@ import "dotenv/config";
 import bcrypt from "bcrypt";
 import cors from "cors";
 import authRouter from "./routes/auth.js";
+import matchRouter from "./routes/match.js";
 import { expressjwt } from "express-jwt";
 import "dotenv";
 import db from "./db.js";
@@ -21,5 +22,6 @@ const jwtMiddleware = expressjwt({
 
 // API Routes:
 app.use("/api/auth", authRouter);
+app.use("/api/match", matchRouter);
 
 app.listen(PORT, () => console.log("Server running on port " + PORT));
