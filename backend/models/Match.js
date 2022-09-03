@@ -22,6 +22,11 @@ const matchSchema = new Schema({
     type: String,
     default: "O",
   },
+  activeUser: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
   winner: {
     type: Schema.Types.ObjectId,
     ref: "User",

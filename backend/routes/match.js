@@ -78,7 +78,10 @@ router.put("/:id", jwtMiddleware, async (req, res) => {
 
     const match = await Match.findById(req.params.id);
 
-    if (req.auth.userId != match.user1 && req.auth.userId != match.user2) {
+    if (
+      req.auth.userId != match.user1._id.toString() &&
+      req.auth.userId != match.user2._id.toString()
+    ) {
       res.status(401).send({ message: "Unauthorized." });
       return;
     }
@@ -88,16 +91,39 @@ router.put("/:id", jwtMiddleware, async (req, res) => {
       return;
     }
 
-    const board = JSON.parse(match.board);
-
-    if (board[req.body.y][req.body.x]) {
-      res.status(400).send({ message: "Invalid coordinates." });
+    // RULE: You can't go unless it's your turn
+    if (
+      match.activeUser &&
+      match.activeUser._id.toString() != req.auth.userId
+    ) {
+      res.status(400).send({ message: "It's not your turn!" });
       return;
     }
 
+    if (!match.activeUser) {
+      match.activeUser = req.auth.userId;
+    }
+
+    const board = JSON.parse(match.board);
+
+    // RULE: You can't go on a taken space
+    if (board[req.body.y][req.body.x]) {
+      res.status(400).send({ message: "That space is taken!" });
+      return;
+    }
+
+    // Mark the board appropriately
     board[req.body.y][req.body.x] =
-      req.auth.userId == match.user1 ? match.user1Symbol : match.user2Symbol;
+      req.auth.userId == match.user1._id.toString()
+        ? match.user1Symbol
+        : match.user2Symbol;
+
     match.board = JSON.stringify(board);
+
+    // Switch the active user
+    match.activeUser = match.activeUser.id.equals(match.user1.id)
+      ? match.user2
+      : match.user1;
 
     await match.save();
 
