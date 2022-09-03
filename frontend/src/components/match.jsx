@@ -3,7 +3,7 @@ import { CustomError } from "../utils";
 import { useNavigate, useParams } from "react-router-dom";
 import css from "../css/match.module.css";
 
-function Match({ token, setToken }) {
+function Match({ token, setToken, user }) {
   const [error, setError] = useState(null);
   const [match, setMatch] = useState(null);
   const navigate = useNavigate();
@@ -83,20 +83,32 @@ function Match({ token, setToken }) {
 
   return (
     token &&
-    match && (
-      <div className={css.gameBoard}>
-        {board.map((row, y) =>
-          row.map((cell, x) => (
-            <button
-              disabled={board[y][x]}
-              onClick={() => {
-                attemptMove(y, x);
-              }}
-            >
-              {board[y][x]}
-            </button>
-          ))
-        )}
+    match &&
+    user && (
+      <div>
+        <div>
+          {match.winner &&
+            (match.winner == user._id ? (
+              <span>You Win!</span>
+            ) : (
+              <span>You Lose!</span>
+            ))}
+        </div>
+        <div>{error}</div>
+        <div className={css.gameBoard}>
+          {board.map((row, y) =>
+            row.map((cell, x) => (
+              <button
+                disabled={board[y][x]}
+                onClick={() => {
+                  attemptMove(y, x);
+                }}
+              >
+                {board[y][x]}
+              </button>
+            ))
+          )}
+        </div>
       </div>
     )
   );

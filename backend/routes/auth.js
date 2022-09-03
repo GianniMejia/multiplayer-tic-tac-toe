@@ -3,8 +3,14 @@ import { Router } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
+import { expressjwt } from "express-jwt";
 
 const router = Router();
+
+const jwtMiddleware = expressjwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ["HS256"],
+});
 
 router.post("/signup", async (req, res) => {
   try {
@@ -34,7 +40,7 @@ router.post("/signup", async (req, res) => {
       algorithm: "HS256",
     });
 
-    res.send({ token: token });
+    res.send({ token: token, user: user });
   } catch (error) {
     res.status(500).send({ message: "Something went wrong." });
     console.log(error);
@@ -72,32 +78,25 @@ router.post("/login", async (req, res) => {
       algorithm: "HS256",
     });
 
-    res.send({ token: token });
+    res.send({ token: token, user: user });
   } catch (error) {
     res.status(500).send({ message: "Something went wrong." });
     console.log(error);
   }
 });
 
-// router.get("/logout", (req, res) => {
-//   req.session.destroy();
-//   res.redirect("/");
-// });
+router.get("/current-user", jwtMiddleware, async (req, res) => {
+  try {
+    if (!req.auth.userId) {
+      res.status(200).send("null");
+      return;
+    }
 
-// router.get("/current-user", async (req, res) => {
-//   try {
-//     if (!req.session.userId) {
-//       res.status(200).send("null");
-//       return;
-//     }
-
-//     res
-//       .status(200)
-//       .send(await User.findOne({ where: { id: req.session.userId } }));
-//   } catch (error) {
-//     res.status(500).send({ message: "Something went wrong." });
-//     console.log(error);
-//   }
-// });
+    res.status(200).send(await User.findById(req.auth.userId));
+  } catch (error) {
+    res.status(500).send({ message: "Something went wrong." });
+    console.log(error);
+  }
+});
 
 export default router;

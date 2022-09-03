@@ -128,8 +128,6 @@ router.put("/:id", jwtMiddleware, async (req, res) => {
     match.loser =
       match.winner && (match.winner == match.user1 ? match.user2 : match.user1);
 
-    console.log(match);
-
     match.board = JSON.stringify(board);
 
     // Switch the active user

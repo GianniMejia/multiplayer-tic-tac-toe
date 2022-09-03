@@ -4,16 +4,38 @@ import Login from "./login";
 import { useEffect, useState } from "react";
 import Home from "./home";
 import Match from "./match";
+import { CustomError } from "../utils";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (token) {
-      localStorage.setItem("token", token);
-    } else {
-      localStorage.removeItem("token");
-    }
+    (async () => {
+      if (token) {
+        localStorage.setItem("token", token);
+
+        const response = await fetch(
+          process.env.REACT_APP_API_URL + "/api/auth/current-user",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new CustomError(data.message, response.status);
+        }
+
+        setUser(data);
+      } else {
+        localStorage.removeItem("token");
+      }
+    })();
   }, [token]);
 
   return (
@@ -47,15 +69,19 @@ function App() {
             />
             <Route
               path="/signup"
-              element={<Signup token={token} setToken={setToken} />}
+              element={
+                <Signup token={token} setToken={setToken} setUser={setUser} />
+              }
             />
             <Route
               path="/login"
-              element={<Login token={token} setToken={setToken} />}
+              element={
+                <Login token={token} setToken={setToken} setUser={setUser} />
+              }
             />
             <Route
               path="/match/:id"
-              element={<Match token={token} setToken={setToken} />}
+              element={<Match token={token} setToken={setToken} user={user} />}
             />
           </Routes>
         </main>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CustomError } from "../utils";
 import { useNavigate } from "react-router-dom";
 
-function Login({ token, setToken }) {
+function Login({ token, setToken, setUser }) {
   const [error, setError] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -44,6 +44,7 @@ function Login({ token, setToken }) {
 
             // Login
             setToken(data.token);
+            setUser(data.user);
             navigate("/");
           } catch (error) {
             if (error.code) {
