@@ -112,11 +112,23 @@ router.put("/:id", jwtMiddleware, async (req, res) => {
       return;
     }
 
+    // RULE: You can't go if there's already a winner
+    if (match.winner) {
+      res.status(400).send({ message: "The game is over!" });
+      return;
+    }
+
     // Mark the board appropriately
     board[req.body.y][req.body.x] =
       req.auth.userId == match.user1._id.toString()
         ? match.user1Symbol
         : match.user2Symbol;
+
+    match.winner = match.winner || getWinner(match, board);
+    match.loser =
+      match.winner && (match.winner == match.user1 ? match.user2 : match.user1);
+
+    console.log(match);
 
     match.board = JSON.stringify(board);
 
@@ -133,5 +145,50 @@ router.put("/:id", jwtMiddleware, async (req, res) => {
     console.log(error);
   }
 });
+
+function getWinner(match, board) {
+  // Check all rows
+  for (let y = 0, x = 0; y < board.length; y++) {
+    if (
+      board[y][x] === null ||
+      board[y][x + 1] === null ||
+      board[y][x + 2] === null
+    ) {
+      continue;
+    }
+    if (board[y][x] == board[y][x + 1] && board[y][x] == board[y][x + 2]) {
+      return board[y][x] == match.user1Symbol ? match.user1 : match.user2;
+    }
+  }
+
+  // Check all columns
+  for (let x = 0, y = 0; x < board[y].length; x++) {
+    if (
+      board[y][x] === null ||
+      board[y + 1][x] === null ||
+      board[y + 2][x] === null
+    ) {
+      continue;
+    }
+    if (board[y][x] == board[y + 1][x] && board[y][x] == board[y + 2][x]) {
+      return board[y][x] == match.user1Symbol ? match.user1 : match.user2;
+    }
+  }
+
+  // Check the diagonals
+  if (board[0][0] !== null || board[1][1] !== null || board[2][2] !== null) {
+    if (board[0][0] == board[1][1] && board[0][0] == board[2][2]) {
+      return board[0][0] == match.user1Symbol ? match.user1 : match.user2;
+    }
+  }
+
+  if (board[0][2] !== null || board[1][1] !== null || board[2][0] !== null) {
+    if (board[0][2] == board[1][1] && board[0][2] == board[2][0]) {
+      return board[0][2] == match.user1Symbol ? match.user1 : match.user2;
+    }
+  }
+
+  return null;
+}
 
 export default router;
