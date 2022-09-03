@@ -47,20 +47,57 @@ function Match({ token, setToken }) {
     }
   }, []);
 
+  const attemptMove = async (y, x) => {
+    try {
+      const response = await fetch(
+        process.env.REACT_APP_API_URL + `/api/match/${match._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            x: x,
+            y: y,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new CustomError(data.message, response.status);
+      }
+
+      setMatch(data.match);
+    } catch (error) {
+      if (error.code) {
+        setError(error.message);
+      } else {
+        throw error;
+      }
+    }
+  };
+
+  const board = match && JSON.parse(match.board);
+
   return (
     token &&
     match && (
-      <form className={css.gameBoard}>
-        <button disabled={match.board[0][0]}>{match.board[0][0]}</button>
-        <button disabled={match.board[0][0]}>{match.board[0][1]}</button>
-        <button disabled={match.board[0][0]}>{match.board[0][2]}</button>
-        <button disabled={match.board[0][0]}>{match.board[1][0]}</button>
-        <button disabled={match.board[0][0]}>{match.board[1][1]}</button>
-        <button disabled={match.board[0][0]}>{match.board[1][2]}</button>
-        <button disabled={match.board[0][0]}>{match.board[2][0]}</button>
-        <button disabled={match.board[0][0]}>{match.board[2][1]}</button>
-        <button disabled={match.board[0][0]}>{match.board[2][2]}</button>
-      </form>
+      <div className={css.gameBoard}>
+        {board.map((row, y) =>
+          row.map((cell, x) => (
+            <button
+              disabled={board[y][x]}
+              onClick={() => {
+                attemptMove(y, x);
+              }}
+            >
+              {board[y][x]}
+            </button>
+          ))
+        )}
+      </div>
     )
   );
 }

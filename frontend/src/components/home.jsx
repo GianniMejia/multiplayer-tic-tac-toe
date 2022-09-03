@@ -33,7 +33,7 @@ function Home({ token, setToken }) {
               throw new CustomError(data.message, response.status);
             }
 
-            navigate(`/match/${data.match.id}`);
+            navigate(`/match/${data.match._id}`);
           } catch (error) {
             if (error.code) {
               setError(error.message);

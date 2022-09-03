@@ -3,12 +3,8 @@ const { Schema, model } = mongoose;
 
 const matchSchema = new Schema({
   board: {
-    type: Array,
-    default: [
-      [null, null, null],
-      [null, null, null],
-      [null, null, null],
-    ],
+    type: String,
+    default: `[[null, null, null], [null, null, null], [null, null, null]]`,
   },
   user1: {
     type: Schema.Types.ObjectId,
@@ -17,6 +13,14 @@ const matchSchema = new Schema({
   user2: {
     type: Schema.Types.ObjectId,
     ref: "User",
+  },
+  user1Symbol: {
+    type: String,
+    default: "X",
+  },
+  user2Symbol: {
+    type: String,
+    default: "O",
   },
   winner: {
     type: Schema.Types.ObjectId,
