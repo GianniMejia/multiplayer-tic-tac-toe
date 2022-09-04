@@ -17,7 +17,7 @@ function Match({ token, setToken, user }) {
 
   useEffect(() => {
     if (token) {
-      (async () => {
+      const getBoardState = async () => {
         try {
           const response = await fetch(
             process.env.REACT_APP_API_URL + `/api/match/${id}`,
@@ -43,7 +43,11 @@ function Match({ token, setToken, user }) {
             throw error;
           }
         }
-      })();
+      };
+
+      getBoardState();
+
+      setInterval(getBoardState, 2000);
     }
   }, []);
 
