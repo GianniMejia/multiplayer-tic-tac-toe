@@ -32,4 +32,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/match", matchRouter);
 app.use("/api/user", userRouter);
 
+app.use("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../frontend/build/index.html"));
+});
+
 app.listen(PORT, () => console.log("Server running on port " + PORT));
