@@ -98,6 +98,12 @@ function Match({ token, setToken, user }) {
               <span>You Lose!</span>
             ))}
         </div>
+        <div>
+          <em>NOTE: Send this link to your opponent...</em>
+        </div>
+        <div>
+          <input type="text" disabled value={window.location.href} />
+        </div>
         <div>{error}</div>
         <div className={css.gameBoard}>
           {board.map((row, y) =>
