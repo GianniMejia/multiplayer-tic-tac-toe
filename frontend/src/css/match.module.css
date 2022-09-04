@@ -8,6 +8,7 @@
 
   width: 400px;
   height: 400px;
+  margin-top: 2em;
 }
 
 .gameBoard button {
@@ -19,4 +20,5 @@
   background: white;
   border-radius: 0;
   font-size: calc(400px / 3 - 20px);
+  color: black;
 }

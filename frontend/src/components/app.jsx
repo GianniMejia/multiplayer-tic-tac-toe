@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Home from "./home";
 import Match from "./match";
 import { CustomError } from "../utils";
+import theme from "../css/theme.module.css";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -40,10 +41,12 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div>
+      <div className={theme.main}>
         <header>
           <nav>
             <Link to="/">Home</Link>
+
+            <span className={theme.spacer}></span>
             {!token ? (
               <>
                 <Link to="/signup">Signup</Link>
