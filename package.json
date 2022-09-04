@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/GianniMejia/multiplayer-tic-tac-toe/issues"
   },
-  "homepage": "https://github.com/GianniMejia/multiplayer-tic-tac-toe#readme"
+  "homepage": "https://github.com/GianniMejia/multiplayer-tic-tac-toe#readme",
+  "engines": {
+    "node": "16.x"
+  }
 }
