@@ -9,12 +9,18 @@ import userRouter from "./routes/user.js";
 import { expressjwt } from "express-jwt";
 import "dotenv";
 import db from "./db.js";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3002; //Heroku || localhost port number
 
 app.use(express.json());
 app.use(cors({ origin: "*" }));
+
+app.use(express.static(path.resolve(__dirname, "../frontend/build")));
 
 const jwtMiddleware = expressjwt({
   secret: process.env.JWT_SECRET,
