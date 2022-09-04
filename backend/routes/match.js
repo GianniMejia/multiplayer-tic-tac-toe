@@ -69,6 +69,7 @@ router.get("/:id", jwtMiddleware, async (req, res) => {
   }
 });
 
+// Route for making a move (taking a turn)
 router.put("/:id", jwtMiddleware, async (req, res) => {
   try {
     if (!req.params.id) {
@@ -127,6 +128,22 @@ router.put("/:id", jwtMiddleware, async (req, res) => {
     match.winner = match.winner || getWinner(match, board);
     match.loser =
       match.winner && (match.winner == match.user1 ? match.user2 : match.user1);
+
+    if (match.winner) {
+      const winner = await User.findById(match.winner);
+      winner.wins += 1;
+      // Round to the nearest 100th
+      winner.winLossRatio =
+        Math.round((winner.wins / (winner.wins + winner.losses)) * 100 * 10) /
+        10;
+      winner.save();
+      const loser = await User.findById(match.loser);
+      loser.losses += 1;
+      // Round to the nearest 100th
+      loser.winLossRatio =
+        Math.round((loser.wins / (loser.wins + loser.losses)) * 100 * 10) / 10;
+      loser.save();
+    }
 
     match.board = JSON.stringify(board);
 
